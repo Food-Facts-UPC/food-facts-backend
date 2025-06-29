@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org</groupId>
-    <artifactId>foodfacts</artifactId>
+    <artifactId>food-facts-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>FoodFacts</name>
     <description>FoodFacts</description>
