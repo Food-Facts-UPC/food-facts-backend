@@ -14,6 +14,10 @@ public record Photo(
         }
     }
 
+    public Photo() {
+        this(null);
+    }
+
     /**
      * Factory method to create an instance with a default photo if necessary.
      * @return a Photo instance with a default value.
