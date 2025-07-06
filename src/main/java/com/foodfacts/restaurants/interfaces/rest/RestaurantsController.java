@@ -10,6 +10,7 @@ import com.foodfacts.restaurants.interfaces.rest.resources.RestaurantResource;
 import com.foodfacts.restaurants.interfaces.rest.transform.AddTagToRestaurantCommandFromResourceAssembler;
 import com.foodfacts.restaurants.interfaces.rest.transform.CreateRestaurantCommandFromResourceAssembler;
 import com.foodfacts.restaurants.interfaces.rest.transform.RestaurantResourceFromEntityAssembler;
+import com.foodfacts.restaurants.domain.model.queries.FindRestaurantsByTagQuery;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,6 +68,16 @@ public class RestaurantsController {
         }
         var restaurantResource = RestaurantResourceFromEntityAssembler.toResourceFromEntity(restaurant.get());
         return ResponseEntity.ok(restaurantResource);
+    }
+
+    @GetMapping("/tag/{tagName}")
+    public ResponseEntity<List<RestaurantResource>> getRestaurantsByTag(@PathVariable String tagName) {
+        var findRestaurantsByTagQuery = new FindRestaurantsByTagQuery(tagName);
+        var restaurants = restaurantQueryService.handle(findRestaurantsByTagQuery);
+        var restaurantResources = restaurants.stream()
+                .map(RestaurantResourceFromEntityAssembler::toResourceFromEntity)
+                .toList();
+        return ResponseEntity.ok(restaurantResources);
     }
 
     @PostMapping("/{restaurantId}/tags")
