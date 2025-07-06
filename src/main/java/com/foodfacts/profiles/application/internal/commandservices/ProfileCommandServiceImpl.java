@@ -21,11 +21,14 @@ public class ProfileCommandServiceImpl<ProfileCommandServiceImpl> implements Pro
 
     @Override
     public Optional<Profile> handle(CreateProfileCommand command) {
+        if (profileRepository.existsById(command.userId())) {
+            throw new IllegalArgumentException("Profile with user ID " + command.userId() + " already exists");
+        }
         var emailAddress = new EmailAddress(command.email());
-        profileRepository.findByEmail(emailAddress).map(profile -> {
+        profileRepository.findByEmail(emailAddress).ifPresent(profile -> {
             throw new IllegalArgumentException("Profile with email " + command.email() + " already exists");
         });
-        var profile = new Profile(command);
+        var profile = new Profile(command.userId(), command.firstName(), command.lastName(), command.email(), command.street(), command.number(), command.city(), command.postalCode(), command.country());
         profileRepository.save(profile);
         return Optional.of(profile);
     }

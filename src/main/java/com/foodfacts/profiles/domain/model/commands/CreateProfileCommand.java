@@ -1,4 +1,4 @@
 package com.foodfacts.profiles.domain.model.commands;
 
-public record CreateProfileCommand(String firstName, String lastName, String email, String street, String number, String city, String postalCode, String country) {
+public record CreateProfileCommand(Long userId, String firstName, String lastName, String email, String street, String number, String city, String postalCode, String country) {
 }
