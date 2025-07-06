@@ -14,6 +14,7 @@ import com.foodfacts.profiles.interfaces.rest.resources.CreateProfileResource;
 import com.foodfacts.profiles.interfaces.rest.resources.ProfileResource;
 import com.foodfacts.profiles.interfaces.rest.transform.CreateProfileCommandFromResourceAssembler;
 import com.foodfacts.profiles.interfaces.rest.transform.ProfileResourceFromEntityAssembler;
+import com.foodfacts.iam.infrastructure.authorization.sfs.model.UserDetailsImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,16 @@ public class ProfilesController {
     }
 
     /**
+     * Helper method to extract user ID from authentication
+     * @param authentication The authentication object
+     * @return The user ID
+     */
+    private Long getUserIdFromAuthentication(Authentication authentication) {
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        return userDetails.getId();
+    }
+
+    /**
      * Creates a new Profile
      * @param resource the resource containing the data to create the Profile
      * @return the created Profile
@@ -53,7 +64,7 @@ public class ProfilesController {
     @PostMapping
     public ResponseEntity<ProfileResource> createProfile(@RequestBody CreateProfileResource resource) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal(); // Assuming principal is the userId
+        Long userId = getUserIdFromAuthentication(authentication);
         var createProfileCommand = CreateProfileCommandFromResourceAssembler.toCommandFromResource(resource, userId);
         var profile = profileCommandService.handle(createProfileCommand);
         if (profile.isEmpty()) return ResponseEntity.badRequest().build();
@@ -106,7 +117,7 @@ public class ProfilesController {
     @GetMapping("/me")
     public ResponseEntity<ProfileResource> getProfileMe() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal(); // Assuming principal is the userId
+        Long userId = getUserIdFromAuthentication(authentication);
         var getProfileByIdQuery = new GetProfileByIdQuery(userId);
         var profile = profileQueryService.handle(getProfileByIdQuery);
         if (profile.isEmpty()) return ResponseEntity.notFound().build();
@@ -117,7 +128,7 @@ public class ProfilesController {
     @PostMapping("/{profileId}/favorites/{restaurantId}")
     public ResponseEntity<ProfileResource> addFavoriteRestaurant(@PathVariable Long profileId, @PathVariable Long restaurantId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal(); // Assuming principal is the userId
+        Long userId = getUserIdFromAuthentication(authentication);
         var addRestaurantToFavoritesCommand = new AddRestaurantToFavoritesCommand(userId, restaurantId);
         var profile = profileCommandService.handle(addRestaurantToFavoritesCommand);
         if (profile.isEmpty()) return ResponseEntity.badRequest().build();
@@ -128,7 +139,7 @@ public class ProfilesController {
     @DeleteMapping("/{profileId}/favorites/{restaurantId}")
     public ResponseEntity<ProfileResource> removeFavoriteRestaurant(@PathVariable Long profileId, @PathVariable Long restaurantId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Long userId = (Long) authentication.getPrincipal(); // Assuming principal is the userId
+        Long userId = getUserIdFromAuthentication(authentication);
         var removeRestaurantFromFavoritesCommand = new RemoveRestaurantFromFavoritesCommand(userId, restaurantId);
         var profile = profileCommandService.handle(removeRestaurantFromFavoritesCommand);
         if (profile.isEmpty()) return ResponseEntity.badRequest().build();
