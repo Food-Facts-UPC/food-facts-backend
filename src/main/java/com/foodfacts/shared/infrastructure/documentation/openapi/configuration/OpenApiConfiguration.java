@@ -18,14 +18,14 @@ public class OpenApiConfiguration {
         var openApi = new OpenAPI();
         openApi
                 .info(new Info()
-                        .title("FairFinance Pocket Partners API")
-                        .description("FairFinance Pocket Partners application REST API documentation.")
+                        .title("Food Facts API")
+                        .description("Food Facts application REST API documentation.")
                         .version("v1.0.0")
                         .license(new License().name("Apache 2.0")
                                 .url("https://springdoc.org")))
                 .externalDocs(new ExternalDocumentation()
-                        .description("FairFinance Pocket Partners wiki Documentation")
-                        .url("https://github.com/PocketPartners/Informe"));
+                        .description("Food Facts wiki Documentation")
+                        .url("https://github.com/food-facts/wiki"));
 
         final String securitySchemeName = "bearerAuth";
 
