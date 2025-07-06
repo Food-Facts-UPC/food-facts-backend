@@ -17,6 +17,7 @@ import com.foodfacts.profiles.interfaces.rest.transform.ProfileResourceFromEntit
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,6 +47,7 @@ public class ProfilesController {
      * @param resource the resource containing the data to create the Profile
      * @return the created Profile
      */
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<ProfileResource> createProfile(@RequestBody CreateProfileResource resource) {
         var createProfileCommand = CreateProfileCommandFromResourceAssembler.toCommandFromResource(resource);
