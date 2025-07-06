@@ -1,6 +1,7 @@
 package org.foodfacts.users.infrastructure.hashing.bcypt.services;
 
 import org.foodfacts.users.infrastructure.hashing.bcypt.BCryptHashingService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -8,8 +9,8 @@ import org.springframework.stereotype.Service;
 public class HashingServiceImpl implements BCryptHashingService {
     private final BCryptPasswordEncoder passwordEncoder;
 
-    HashingServiceImpl() {
-        this.passwordEncoder = new BCryptPasswordEncoder();
+    public HashingServiceImpl(@Value("${security.bcrypt.strength:8}") int strength) {
+        this.passwordEncoder = new BCryptPasswordEncoder(strength);
     }
 
     /**
