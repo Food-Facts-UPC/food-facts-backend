@@ -102,6 +102,7 @@ public class WebSecurityConfiguration {
             cors.setAllowedHeaders(List.of("*"));
             return cors;
         }));
+        http.csrf(csrf -> csrf.disable());
         http.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(unauthorizedRequestHandler))
             .sessionManagement(customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorizeRequests -> authorizeRequests
