@@ -2,6 +2,8 @@ package com.foodfacts.profiles.interfaces.rest;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import com.foodfacts.profiles.domain.model.commands.AddRestaurantToFavoritesCommand;
+import com.foodfacts.profiles.domain.model.commands.RemoveRestaurantFromFavoritesCommand;
 import com.foodfacts.profiles.domain.model.queries.GetAllProfilesQuery;
 import com.foodfacts.profiles.domain.model.queries.GetProfileByEmailQuery;
 import com.foodfacts.profiles.domain.model.queries.GetProfileByIdQuery;
@@ -91,5 +93,23 @@ public class ProfilesController {
         var profiles = profileQueryService.handle(getAllProfilesQuery);
         var profileResources = profiles.stream().map(ProfileResourceFromEntityAssembler::toResourceFromEntity).collect(Collectors.toList());
         return ResponseEntity.ok(profileResources);
+    }
+
+    @PostMapping("/{profileId}/favorites/{restaurantId}")
+    public ResponseEntity<ProfileResource> addFavoriteRestaurant(@PathVariable Long profileId, @PathVariable Long restaurantId) {
+        var addRestaurantToFavoritesCommand = new AddRestaurantToFavoritesCommand(profileId, restaurantId);
+        var profile = profileCommandService.handle(addRestaurantToFavoritesCommand);
+        if (profile.isEmpty()) return ResponseEntity.badRequest().build();
+        var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profile.get());
+        return new ResponseEntity<>(profileResource, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{profileId}/favorites/{restaurantId}")
+    public ResponseEntity<ProfileResource> removeFavoriteRestaurant(@PathVariable Long profileId, @PathVariable Long restaurantId) {
+        var removeRestaurantFromFavoritesCommand = new RemoveRestaurantFromFavoritesCommand(profileId, restaurantId);
+        var profile = profileCommandService.handle(removeRestaurantFromFavoritesCommand);
+        if (profile.isEmpty()) return ResponseEntity.badRequest().build();
+        var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profile.get());
+        return new ResponseEntity<>(profileResource, HttpStatus.OK);
     }
 }

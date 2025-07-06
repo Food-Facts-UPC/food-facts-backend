@@ -1,5 +1,9 @@
 package com.foodfacts.profiles.domain.model.aggregates;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import com.foodfacts.profiles.domain.model.commands.CreateProfileCommand;
 import com.foodfacts.profiles.domain.model.valueobjects.EmailAddress;
 import com.foodfacts.profiles.domain.model.valueobjects.PersonName;
@@ -25,6 +29,11 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
             @AttributeOverride(name = "postalCode", column = @Column(name = "address_postal_code")),
             @AttributeOverride(name = "country", column = @Column(name = "address_country"))})
     private StreetAddress address;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "profile_favorite_restaurants", joinColumns = @JoinColumn(name = "profile_id"))
+    @Column(name = "restaurant_id")
+    private Set<Long> favoriteRestaurantIds = new HashSet<>();
 
     public Profile(String firstName, String lastName, String email, String street, String number, String city, String postalCode, String country) {
         this.name = new PersonName(firstName, lastName);
@@ -63,5 +72,17 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
 
     public String getStreetAddress() {
         return address.getStreetAddress();
+    }
+
+    public void addFavoriteRestaurant(Long restaurantId) {
+        this.favoriteRestaurantIds.add(restaurantId);
+    }
+
+    public void removeFavoriteRestaurant(Long restaurantId) {
+        this.favoriteRestaurantIds.remove(restaurantId);
+    }
+
+    public List<Long> getFavoriteRestaurantIds() {
+        return favoriteRestaurantIds.stream().toList();
     }
 }

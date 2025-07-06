@@ -5,7 +5,13 @@ import com.foodfacts.profiles.interfaces.rest.resources.ProfileResource;
 
 public class ProfileResourceFromEntityAssembler {
     public static ProfileResource toResourceFromEntity(Profile entity) {
-        return new ProfileResource(entity.getId(), entity.getFullName(), entity.getEmailAddress(), entity.getStreetAddress());
+        return new ProfileResource(
+            entity.getId(),
+            entity.getFullName(),
+            entity.getEmailAddress(),
+            entity.getStreetAddress(),
+            new java.util.HashSet<>(entity.getFavoriteRestaurantIds())
+        );
     }
 }
 
