@@ -66,7 +66,7 @@ public class ProfilesController {
     public ResponseEntity<ProfileResource> getProfileById(@PathVariable Long profileId) {
         var getProfileByIdQuery = new GetProfileByIdQuery(profileId);
         var profile = profileQueryService.handle(getProfileByIdQuery);
-        if (profile.isEmpty()) return ResponseEntity.badRequest().build();
+        if (profile.isEmpty()) return ResponseEntity.notFound().build();
         var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profile.get());
         return ResponseEntity.ok(profileResource);
     }
