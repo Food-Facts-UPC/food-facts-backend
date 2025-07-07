@@ -34,9 +34,13 @@ public class Profile { // Removed extends AuditableAbstractAggregateRoot
     private StreetAddress address;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "profile_favorite_restaurants", joinColumns = @JoinColumn(name = "profile_id"))
+    @CollectionTable(
+        name = "profile_favorite_restaurants", 
+        joinColumns = @JoinColumn(name = "profile_id"),
+        foreignKey = @ForeignKey(name = "fk_profile_favorite_restaurants")
+    )
     @Column(name = "restaurant_id")
-    private Set<Long> favoriteRestaurantIds = new HashSet<>();
+    private Set<Long> favoriteRestaurants = new HashSet<>();
 
     // Constructors need to be updated to accept userId
     public Profile(Long userId, String firstName, String lastName, String email, String street, String number, String city, String postalCode, String country) {
@@ -91,14 +95,14 @@ public class Profile { // Removed extends AuditableAbstractAggregateRoot
     }
 
     public void addFavoriteRestaurant(Long restaurantId) {
-        this.favoriteRestaurantIds.add(restaurantId);
+        this.favoriteRestaurants.add(restaurantId);
     }
 
     public void removeFavoriteRestaurant(Long restaurantId) {
-        this.favoriteRestaurantIds.remove(restaurantId);
+        this.favoriteRestaurants.remove(restaurantId);
     }
 
     public List<Long> getFavoriteRestaurantIds() {
-        return favoriteRestaurantIds.stream().toList();
+        return favoriteRestaurants.stream().toList();
     }
 }
