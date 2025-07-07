@@ -146,4 +146,28 @@ public class ProfilesController {
         var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profile.get());
         return new ResponseEntity<>(profileResource, HttpStatus.OK);
     }
+
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/me/favorites/{restaurantId}")
+    public ResponseEntity<ProfileResource> addFavoriteRestaurantMe(@PathVariable Long restaurantId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = getUserIdFromAuthentication(authentication);
+        var addRestaurantToFavoritesCommand = new AddRestaurantToFavoritesCommand(userId, restaurantId);
+        var profile = profileCommandService.handle(addRestaurantToFavoritesCommand);
+        if (profile.isEmpty()) return ResponseEntity.badRequest().build();
+        var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profile.get());
+        return new ResponseEntity<>(profileResource, HttpStatus.OK);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping("/me/favorites/{restaurantId}")
+    public ResponseEntity<ProfileResource> removeFavoriteRestaurantMe(@PathVariable Long restaurantId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = getUserIdFromAuthentication(authentication);
+        var removeRestaurantFromFavoritesCommand = new RemoveRestaurantFromFavoritesCommand(userId, restaurantId);
+        var profile = profileCommandService.handle(removeRestaurantFromFavoritesCommand);
+        if (profile.isEmpty()) return ResponseEntity.badRequest().build();
+        var profileResource = ProfileResourceFromEntityAssembler.toResourceFromEntity(profile.get());
+        return new ResponseEntity<>(profileResource, HttpStatus.OK);
+    }
 }
